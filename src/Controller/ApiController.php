@@ -8,11 +8,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Symfony\Component\Serializer\SerializerInterface;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
+
 
 use App\Document\Festivals;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 class ApiController extends AbstractController
@@ -57,12 +55,12 @@ class ApiController extends AbstractController
     #[Route('/festivals', name: 'festivals_create', methods:['POST'])]
     public function create(Request $request): Response 
     {
+        
         $festivals = $this->serializerInterface->deserialize($request->getContent(), Festivals::class, 'json');
-        dd($festivals);
         $this->documentManager->persist($festivals);
         $this->documentManager->flush();
 
-        return $this->json([], 201, ["Festivals" => "/api/" . $festivals->getId()]);
+        return $this->json($festivals, 201);
     }
 
     #[Route('/festivals/{id}', name: 'festivals_update', methods:['PUT'])]
@@ -88,7 +86,7 @@ class ApiController extends AbstractController
         return $this->json([], 204);
     }
 
-    #[Route('/festivals/delete/{id}', name: 'festivals_delete', methods:['DELETE'])]
+    #[Route('/festivals/{id}', name: 'festivals_delete', methods:['DELETE'])]
     public function deleteById($id): Response 
     {
         $festivals = $this->documentManager->getRepository(festivals::class)->find($id);
@@ -110,24 +108,7 @@ class ApiController extends AbstractController
         return $this->json($festivals);
     }
 
-    #[Route('/login', name: 'app_login', methods:['POST'])]
-    public function login(Request $request, UserPasswordHasherInterface $encoder, JWTTokenManagerInterface $JWTManager, UserProviderInterface $userProvider): Response
-    {
-        $data = json_decode($request->getContent(), true);
-    
-        $username = $data['username'];
-        $plainPassword = $data['password'];
-    
-        $user = $userProvider->loadUserByIdentifier($username);
-    
-        if (!$user || !$encoder->isPasswordValid($user, $plainPassword)) {
-            return $this->json(['error' => 'Invalid credentials'], 401);
-        }
-    
-        $token = $JWTManager->create($user);
-    
-        return $this->json(['token' => $token]);
-    }
+  
 
 
 }

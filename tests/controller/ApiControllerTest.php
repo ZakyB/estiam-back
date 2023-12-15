@@ -20,7 +20,7 @@ class ApiControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request(
             'POST',
-            '/login',
+            '/api/login_check',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],
@@ -42,7 +42,7 @@ class ApiControllerTest extends WebTestCase
         $client = static::createClient();
         $client->request(
             'POST',
-            '/login',
+            '/api/login_check',
             [],
             [],
             ['CONTENT_TYPE' => 'application/json'],

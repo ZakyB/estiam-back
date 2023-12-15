@@ -88,7 +88,7 @@ class ApiController extends AbstractController
         return $this->json([], 204);
     }
 
-    #[Route('/festivals/{id}', name: 'prix_delete', methods:['DELETE'])]
+    #[Route('/festivals/delete/{id}', name: 'festivals_delete', methods:['DELETE'])]
     public function deleteById($id): Response 
     {
         $festivals = $this->documentManager->getRepository(festivals::class)->find($id);
